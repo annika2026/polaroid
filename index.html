@@ -40,17 +40,23 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
+            will-change: transform; /* 优化移动端性能 */
+            backface-visibility: hidden; /* 优化移动端渲染 */
         }
 
         /* 移动端适配 */
         @media (max-width: 768px) {
             /* 背景光晕在移动端调整 */
             body::before {
-                width: 400px;
-                height: 400px;
-                top: 150px;
-                filter: blur(500px);
-                -webkit-filter: blur(500px);
+                width: 500px;
+                height: 500px;
+                top: 20vh;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.4);
+                filter: blur(600px) !important;
+                -webkit-filter: blur(600px) !important;
+                opacity: 1 !important;
             }
             
             /* 相机在移动端居中 */
