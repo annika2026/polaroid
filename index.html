@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polaroid Booth Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400&family=Nothing+You+Could+Do&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -11,6 +11,11 @@
             --bg-color: #0C0C0C;
             --frame-color: #FFFFFF;
             --text-color: #000000;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
         }
 
         body {
@@ -22,7 +27,10 @@
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 100vw;
         }
 
         /* 背景光晕效果 */
@@ -46,6 +54,20 @@
 
         /* 移动端适配 */
         @media (max-width: 768px) {
+            html {
+                width: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            
+            body {
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+                overflow-y: auto;
+                position: relative;
+            }
+            
             /* 背景光晕在移动端调整 */
             body::before {
                 width: 500px;
@@ -57,6 +79,12 @@
                 filter: blur(600px) !important;
                 -webkit-filter: blur(600px) !important;
                 opacity: 1 !important;
+            }
+            
+            /* 确保所有元素不超出视口宽度 */
+            * {
+                max-width: 100vw;
+                box-sizing: border-box;
             }
             
             /* 相机在移动端居中 */
