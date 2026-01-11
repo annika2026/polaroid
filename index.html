@@ -66,6 +66,7 @@
                 overflow-x: hidden;
                 overflow-y: auto;
                 position: relative;
+                padding-bottom: 100px; /* 下载按钮下方预留100px滚动区间 */
             }
             
             /* 背景光晕在移动端调整 */
@@ -101,18 +102,21 @@
             
             /* 拍照弹窗移动端适配 */
             .photo-page {
-                width: 90vw;
+                width: calc(100vw - 16px); /* 左右各8px padding */
                 max-width: 500px;
-                padding: 20px;
+                padding: 20px 16px; /* 上下20px，左右16px */
                 gap: 15px;
                 cursor: default; /* 移动端禁用拖动 */
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
             
             .photo-preview {
-                width: 100%;
+                width: calc(100% - 32px); /* 左右各16px padding */
                 max-width: 400px;
                 height: auto;
                 aspect-ratio: 1;
+                margin: 0 16px; /* 左右各16px padding */
             }
             
             .photo-capture-btn {
