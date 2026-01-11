@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polaroid Booth Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400&family=Nothing+You+Could+Do&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 基础色值 - 从 Figma 提取 */
+            --bg-color: #0C0C0C;
+            --frame-color: #FFFFFF;
+            --text-color: #000000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 背景光晕效果 */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.4);
+            filter: blur(1000px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 相机左上角粉色光晕 */
+        .glow-pink {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            left: calc(50% - 200px);
+            top: calc(33.33% - 165px);
+            transform: translate(-50%, -50%);
+            background: rgba(245, 110, 198, 0.6);
+            filter: blur(100px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: glowFlow1 5s ease-in-out infinite;
+        }
+
+        /* 相机右下角蓝色光晕 */
+        .glow-blue {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            left: calc(50% + 200px);
+            top: calc(33.33% + 165px);
+            transform: translate(-50%, -50%);
+            background: rgba(36, 112, 234, 0.6);
+            filter: blur(100px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: glowFlow2 5s ease-in-out infinite;
+        }
+
+        @keyframes glowFlow1 {
+            0%, 100% {
+                transform: translate(-50%, -50%) translate(0, 0) scale(1);
+                opacity: 0.4;
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(50px, 35px) scale(1.2);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(-35px, 55px) scale(0.9);
+                opacity: 0.6;
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(-50px, -25px) scale(1.1);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes glowFlow2 {
+            0%, 100% {
+                transform: translate(-50%, -50%) translate(0, 0) scale(1);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(-50px, -35px) scale(1.2);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(35px, -55px) scale(0.9);
+                opacity: 1;
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(50px, 25px) scale(1.1);
+                opacity: 0.5;
+            }
+        }
+
+        /* --- 相机上方文本 --- */
+        .photo-prompt {
+            position: absolute;
+            left: calc(50% - 155px); /* 和相机视觉左边缘对齐，右移40px */
+            top: calc(33.33% - 165px - 40px); /* 相机上方40px */
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #00E5FF;
+            text-shadow: 
+                0 0 5px #00E5FF,
+                0 0 10px #00E5FF;
+            letter-spacing: 1px;
+            z-index: 10;
+            animation: subtleFlicker 3s ease-in-out infinite;
+            white-space: nowrap;
+        }
+
+        .photo-prompt .dots {
+            display: inline-block;
+        }
+
+        .photo-prompt .dots span {
+            opacity: 0;
+        }
+
+        .photo-prompt .dots span:nth-child(1) {
+            animation: dot1 3s infinite;
+        }
+
+        .photo-prompt .dots span:nth-child(2) {
+            animation: dot2 3s infinite;
+        }
+
+        .photo-prompt .dots span:nth-child(3) {
+            animation: dot3 3s infinite;
+        }
+
+        @keyframes dot1 {
+            0% {
+                opacity: 0;
+            }
+            2% {
+                opacity: 1;
+            }
+            62.33% {
+                opacity: 1;
+            }
+            66.67% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes dot2 {
+            0% {
+                opacity: 0;
+            }
+            14.5% {
+                opacity: 0;
+            }
+            16.5% {
+                opacity: 1;
+            }
+            62.33% {
+                opacity: 1;
+            }
+            66.67% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes dot3 {
+            0% {
+                opacity: 0;
+            }
+            27% {
+                opacity: 0;
+            }
+            29% {
+                opacity: 1;
+            }
+            62.33% {
+                opacity: 1;
+            }
+            66.67% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes subtleFlicker {
+            0%, 100% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 5px #00E5FF,
+                    0 0 10px #00E5FF;
+            }
+            50% {
+                opacity: 0.85;
+                text-shadow: 
+                    0 0 3px #00E5FF,
+                    0 0 6px #00E5FF;
+            }
+        }
+
+        /* --- 相机部分 --- */
+        .camera-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            top: 33.33%; /* 页面的1/3高度处 */
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .camera-icon {
+            /* 从 Figma Photo Booth 提取的样式 */
+            width: 400px;
+            height: 330px;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            object-fit: contain;
+            pointer-events: none; /* 相机本身不可点击 */
+        }
+
+        /* 拍照按钮 - 位于相机左上角，覆盖在polaroid图片上 */
+        .camera-shutter-btn {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            left: 56px; /* 57px - 1px 左移1px */
+            top: 16px; /* 22px - 6px 上移6px */
+            background: transparent; /* 默认透明 */
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            z-index: 10;
+            transition: background 0.2s ease;
+        }
+
+        .camera-shutter-btn:hover {
+            background: rgba(255, 255, 255, 0.3); /* hover时：白色30%透明度 */
+        }
+
+        .camera-shutter-btn:active {
+            background: rgba(0, 0, 0, 0.2); /* active时：黑色20%透明度 */
+        }
+
+        /* --- 拍照页面弹窗（初始隐藏）--- */
+        .photo-page {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            cursor: move;
+        }
+
+        .photo-page.active {
+            display: flex;
+        }
+
+        .photo-page-header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: -10px;
+        }
+
+        .photo-page-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .photo-page-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .photo-preview {
+            width: 400px;
+            height: 400px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* 镜像翻转，和照片效果一致 */
+        }
+
+        .photo-capture-btn {
+            padding: 12px 40px;
+            background: #F14141;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .photo-capture-btn:hover {
+            background: #d63030;
+            transform: scale(1.05);
+        }
+
+        /* --- 拍立得相框部分 --- */
+        .polaroid-container {
+            /* 从 Figma Frame 提取的样式 - 1:1 还原 */
+            /* 相片大小：348px × 402px（内容宽度，不包括padding和border） */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 水平居中对齐，确保左右padding对称 */
+            padding: 16px 15px 16px 15px; /* 上16px、右15px、下16px、左15px - 使左右padding和上padding视觉一致 */
+            gap: 12px;
+            position: absolute;
+            left: 50%;
+            top: calc(33.33vh + 165px - 80px + 10px - 5px - 3px - 10px); /* 相片顶点在相机底部 - 80px，上移10px */
+            background: #FFFFFF;
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png'); /* 纸张纹理叠加 */
+            background-blend-mode: overlay; /* 叠加模式，使纹理与背景色混合 */
+            border: 1px solid #E0E0E0;
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translate(-50%, 0) scale(0.8);
+            pointer-events: none; /* 默认不可点击，但子元素可以覆盖 */
+            z-index: 5;
+            box-sizing: content-box; /* 使用content-box，348px是内容宽度，padding在外部 */
+        }
+
+        .polaroid-container.show {
+            opacity: 1;
+        }
+
+        /* 滑出动画 - 从相机4/5高度处匀速垂直滑落，落在相机下方40px，速度加快1倍 */
+        .polaroid-container.slide-out {
+            animation: slideOut 0.6s linear forwards; /* 速度加快1倍：从1.2s改为0.6s */
+        }
+
+        @keyframes slideOut {
+            0% {
+                /* 起始位置：相片顶点在相机底部 - 80px，上移10px */
+                top: calc(33.33vh + 165px - 80px + 10px - 5px - 3px - 10px);
+                transform: translate(-50%, 0) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                /* 最终位置：相片顶点在相机底部 + 40px，上移30px，缩小至80% */
+                top: calc(33.33vh + 165px + 40px - 20px - 10px - 10px - 20px - 10px);
+                transform: translate(-50%, 0) scale(0.8);
+                opacity: 1;
+            }
+        }
+
+        /* 纸张纹理叠加层 - 根据 Figma 设计，背景是纯色 #FFFFFF，移除纹理 */
+
+        .viewfinder {
+            /* 从 Figma Rectangle 提取的样式 - 1:1 还原 */
+            /* 拍出来的照片尺寸：316px × 316px */
+            width: 316px;
+            height: 316px;
+            background: #111;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0px 0px 4px 2px rgba(0, 0, 0, 0.15);
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+            margin: 0; /* 确保没有额外的margin */
+            box-sizing: border-box; /* 确保box-sizing一致 */
+        }
+
+        #result-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) sepia(0.2) brightness(1.05); /* 拍立得照片滤镜效果 */
+        }
+
+        /* 签名部分 */
+        .signature {
+            /* 从 Figma Annika 文本提取的样式 - 1:1 还原 */
+            display: flex;
+            align-items: center;
+            text-align: center; /* 文字居中 */
+            direction: ltr; /* 强制从左到右 */
+            width: 316px;
+            height: 42px;
+            font-family: 'Caveat', cursive;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 32px;
+            line-height: 40px;
+            color: #000000;
+            flex: none;
+            order: 1;
+            flex-grow: 0;
+            margin: 0;
+            padding: 0;
+            justify-content: center; /* 内容居中 */
+            box-sizing: border-box; /* 确保box-sizing一致 */
+            cursor: text; /* 显示文本光标 */
+            outline: none; /* 移除焦点时的默认轮廓 */
+            position: relative;
+            pointer-events: auto; /* 允许签名区域接收点击事件 */
+        }
+
+        /* 签名输入框样式 */
+        .signature:empty::before {
+            content: 'sign here';
+            color: #999999; /* 占位符颜色 */
+        }
+
+        /* 下载按钮 */
+        .download-btn {
+            position: absolute;
+            left: 50%;
+            /* 相片最终位置：calc(33.33vh + 165px + 40px - 20px - 10px - 10px - 20px - 10px) */
+            /* 相片实际高度：padding(32px) + viewfinder(316px) + gap(12px) + signature(42px) + border(2px) = 404px */
+            /* scale(0.8)后实际显示高度：404px * 0.8 = 323.2px */
+            /* 按钮位置：相片top + 相片高度 + 20px间距 */
+            top: calc(33.33vh + 165px + 40px - 20px - 10px - 10px - 20px - 10px + 323.2px + 20px + 20px + 10px);
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: #00E5FF;
+            text-shadow: 
+                0 0 5px #00E5FF;
+            letter-spacing: 1px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            white-space: nowrap;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            animation: none; /* 默认不播放动画 */
+        }
+
+        .download-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            animation: subtleFlicker 3s ease-in-out infinite; /* 显示时才播放动画 */
+        }
+
+        .download-btn:hover {
+            text-shadow: 
+                0 0 8px #00E5FF,
+                0 0 15px #00E5FF;
+        }
+
+        /* 移除自定义光标，使用浏览器默认光标 */
+
+        /* 当有内容且不是占位符时，隐藏占位符 */
+        .signature:not(:empty)::before {
+            display: none;
+        }
+
+
+        /* 倒计时动画 */
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+            display: none;
+            z-index: 100;
+        }
+
+        .countdown.show {
+            display: block;
+            animation: countdownPulse 0.8s ease;
+        }
+
+        @keyframes countdownPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 彩色光晕 -->
+    <div class="glow-pink"></div>
+    <div class="glow-blue"></div>
+
+    <!-- 相机上方提示文本 -->
+    <div class="photo-prompt">
+        Take a photo<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+    </div>
+
+    <div class="camera-section" id="camera-section">
+        <img src="polaroid-frame.png" alt="Camera" class="camera-icon" id="camera-icon">
+        <button class="camera-shutter-btn" id="camera-shutter-btn"></button>
+    </div>
+
+    <!-- 拍照页面弹窗（初始隐藏） -->
+    <div class="photo-page" id="photo-page">
+        <div class="photo-page-header">
+            <button class="photo-page-close" id="photo-page-close">×</button>
+        </div>
+        <div class="photo-preview">
+            <video id="video" playsinline></video>
+            <div class="countdown" id="timer">3</div>
+        </div>
+        <button class="photo-capture-btn" id="photo-capture-btn">拍照</button>
+    </div>
+
+    <!-- 拍立得相片（初始隐藏，拍照后滑出） -->
+    <div class="polaroid-container" id="polaroid-container">
+        <div class="viewfinder">
+            <canvas id="output" style="display: none;"></canvas>
+            <img id="result-img" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="signature" contenteditable="true" id="signature-input"></div>
+    </div>
+
+    <button class="download-btn" id="download-btn">Download</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const video = document.getElementById('video');
+        const cameraShutterBtn = document.getElementById('camera-shutter-btn');
+        const photoPage = document.getElementById('photo-page');
+        const photoPageClose = document.getElementById('photo-page-close');
+        const photoCaptureBtn = document.getElementById('photo-capture-btn');
+        const canvas = document.getElementById('output');
+        const resultImg = document.getElementById('result-img');
+        const timerDisplay = document.getElementById('timer');
+        const polaroidContainer = document.getElementById('polaroid-container');
+        let stream = null;
+        
+        // 音效
+        const shutterSound = new Audio('camera-shutter-314056.mp3'); // 相机快门咔嚓声
+        shutterSound.volume = 0.6;
+        
+        // 弹窗拖动功能
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        photoPage.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+            // 如果点击的是按钮或输入框，不触发拖动
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'VIDEO') {
+                return;
+            }
+            
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+
+            if (e.target === photoPage || photoPage.contains(e.target)) {
+                isDragging = true;
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+
+                xOffset = currentX;
+                yOffset = currentY;
+
+                setTranslate(currentX, currentY, photoPage);
+            }
+        }
+
+        function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate(calc(-50% + ${xPos}px), calc(-50% + ${yPos}px))`;
+        }
+
+        // 关闭弹窗
+        photoPageClose.addEventListener('click', () => {
+            closePhotoPage();
+        });
+
+        function closePhotoPage() {
+            // 停止视频流
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            // 隐藏弹窗
+            photoPage.classList.remove('active');
+            // 重置位置
+            xOffset = 0;
+            yOffset = 0;
+            setTranslate(0, 0, photoPage);
+            // 重置视频
+            video.srcObject = null;
+        }
+
+        // 1. 点击红色按钮，开启摄像头
+        cameraShutterBtn.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({ video: { aspectRatio: 1 } })
+                .then(mediaStream => {
+                    stream = mediaStream;
+                    video.srcObject = stream;
+                    video.play();
+                    // 显示拍照页面弹窗
+                    photoPage.classList.add('active');
+                    // 重置弹窗位置
+                    xOffset = 0;
+                    yOffset = 0;
+                    setTranslate(0, 0, photoPage);
+                })
+                .catch(err => {
+                    alert("请允许访问摄像头");
+                    console.error("摄像头访问失败:", err);
+                });
+        });
+
+        // 2. 点击拍照按钮，开始倒计时
+        photoCaptureBtn.addEventListener('click', () => {
+            startCountdown();
+        });
+
+        function startCountdown() {
+            let count = 3;
+            timerDisplay.textContent = count;
+            timerDisplay.classList.add('show');
+            photoCaptureBtn.disabled = true;
+            
+            const countdown = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    timerDisplay.textContent = count;
+                } else {
+                    timerDisplay.textContent = '';
+                    clearInterval(countdown);
+                    timerDisplay.classList.remove('show');
+                    takePhoto();
+                }
+            }, 800);
+        }
+
+        function takePhoto() {
+            // 播放快门咔嚓声
+            shutterSound.currentTime = 0;
+            shutterSound.play().catch(e => console.log('音效播放失败:', e));
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = 316; // 匹配照片尺寸
+            canvas.height = 316;
+            
+            // 镜像修复
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 转换为图片并显示
+            resultImg.src = canvas.toDataURL('image/png');
+            resultImg.style.display = 'block'; // 显示图片
+            
+            // 停止视频流
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            // 隐藏拍照页面弹窗
+            closePhotoPage();
+            
+            // 显示拍立得相片并触发滑出动画
+            setTimeout(() => {
+                polaroidContainer.classList.add('show', 'slide-out');
+                
+                // 监听滑出动画完成事件
+                const handleAnimationEnd = (e) => {
+                    // 确保是slideOut动画完成
+                    if (e.animationName === 'slideOut') {
+                        const downloadBtn = document.getElementById('download-btn');
+                        downloadBtn.classList.add('show');
+                        polaroidContainer.removeEventListener('animationend', handleAnimationEnd);
+                    }
+                };
+                polaroidContainer.addEventListener('animationend', handleAnimationEnd);
+                
+                // 增加照片淡出效果（模拟显影）
+                resultImg.style.filter = "brightness(2) contrast(0.5) sepia(0)";
+                setTimeout(() => {
+                    resultImg.style.transition = "all 2s ease";
+                    resultImg.style.filter = "contrast(1.1) sepia(0.2) brightness(1.05)"; // 与CSS保持一致
+                }, 100);
+            }, 100);
+            
+            // 重新启用拍照按钮
+            photoCaptureBtn.disabled = false;
+        }
+
+        // 签名输入功能
+        const signatureInput = document.getElementById('signature-input');
+        
+        // 回车完成输入，阻止换行（使用 keypress 事件，不会在输入法确认时触发）
+        signatureInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                this.blur();
+            }
+        });
+
+        // 防止粘贴HTML内容，只保留纯文本
+        signatureInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\n/g, '');
+            document.execCommand('insertText', false, text);
+        });
+        
+        // 清理可能的换行符（防止某些浏览器插入 <br> 或 <div>）
+        signatureInput.addEventListener('blur', function() {
+            // 获取纯文本内容
+            const text = this.innerText.replace(/\n/g, '').trim();
+            // 只保留纯文本
+            if (this.innerHTML !== text) {
+                this.textContent = text;
+            }
+        });
+
+        // 下载功能
+        const downloadBtn = document.getElementById('download-btn');
+        let downloadImageUrl = null;
+        let downloadImageElement = null;
+
+        downloadBtn.addEventListener('click', async function() {
+            const polaroidContainer = document.getElementById('polaroid-container');
+            
+            try {
+                // 显示加载状态
+                downloadBtn.textContent = 'Processing...';
+                downloadBtn.style.pointerEvents = 'none';
+                
+                // 创建一个隐藏的完整大小容器用于截图
+                const cloneContainer = polaroidContainer.cloneNode(true);
+                const cloneId = 'polaroid-clone-' + Date.now();
+                cloneContainer.id = cloneId;
+                cloneContainer.style.position = 'fixed';
+                cloneContainer.style.left = '-10000px';
+                cloneContainer.style.top = '0';
+                cloneContainer.style.transform = 'translate(0, 0) scale(1)'; // 移除所有变换，使用原始大小
+                cloneContainer.style.opacity = '1';
+                cloneContainer.style.zIndex = '99999';
+                cloneContainer.classList.remove('show', 'slide-out'); // 移除动画类
+                
+                // 修复克隆容器中的元素ID和样式
+                const cloneImg = cloneContainer.querySelector('img');
+                if (cloneImg) {
+                    cloneImg.id = cloneId + '-img';
+                    cloneImg.style.display = 'block';
+                    // 确保使用原始图片源
+                    const originalImg = document.getElementById('result-img');
+                    if (originalImg && originalImg.src) {
+                        cloneImg.src = originalImg.src;
+                    }
+                }
+                const cloneCanvas = cloneContainer.querySelector('canvas');
+                if (cloneCanvas) {
+                    cloneCanvas.id = cloneId + '-canvas';
+                    cloneCanvas.style.display = 'none';
+                }
+                const cloneSignature = cloneContainer.querySelector('.signature');
+                if (cloneSignature) {
+                    cloneSignature.id = cloneId + '-signature';
+                    cloneSignature.contentEditable = 'false'; // 禁用编辑
+                }
+                
+                document.body.appendChild(cloneContainer);
+                
+                // 等待DOM更新和图片加载
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // 截图克隆的容器
+                // 确保容器完全可见，添加临时padding避免裁切
+                const originalPadding = cloneContainer.style.padding;
+                cloneContainer.style.padding = '16px 15px 16px 15px'; // 确保padding正确
+                
+                // 等待样式应用
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                // 使用offsetWidth/offsetHeight获取包含border的完整尺寸
+                const fullWidth = cloneContainer.offsetWidth;
+                const fullHeight = cloneContainer.offsetHeight;
+                
+                const canvas = await html2canvas(cloneContainer, {
+                    backgroundColor: null, // 透明背景
+                    scale: 2, // 提高清晰度
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: true,
+                    width: fullWidth,
+                    height: fullHeight,
+                    x: 0,
+                    y: 0
+                });
+                
+                // 清理克隆容器
+                document.body.removeChild(cloneContainer);
+
+                // 转换为图片URL
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = `polaroid-${Date.now()}.png`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // 保存URL供右键保存使用
+                downloadImageUrl = dataUrl;
+                
+                // 创建或更新可保存的图片元素（覆盖在拍立得上，供右键/长按保存）
+                if (!downloadImageElement) {
+                    downloadImageElement = document.createElement('img');
+                    downloadImageElement.id = 'download-image';
+                    downloadImageElement.style.position = 'absolute';
+                    downloadImageElement.style.left = '50%';
+                    downloadImageElement.style.top = 'calc(33.33vh + 165px + 40px - 20px - 10px - 10px - 20px - 10px)';
+                    downloadImageElement.style.transform = 'translate(-50%, 0) scale(0.8)';
+                    downloadImageElement.style.width = '378px'; // 相框宽度 (348 + 15*2)
+                    downloadImageElement.style.height = '402px'; // 相框高度
+                    downloadImageElement.style.opacity = '0'; // 完全透明，但可以交互
+                    downloadImageElement.style.pointerEvents = 'auto';
+                    downloadImageElement.style.zIndex = '6'; // 在polaroid-container上方
+                    downloadImageElement.style.cursor = 'pointer';
+                    downloadImageElement.title = '右键保存图片（PC）或长按保存（移动端）';
+                    document.body.appendChild(downloadImageElement);
+                }
+                downloadImageElement.src = dataUrl;
+                downloadImageElement.alt = 'Polaroid Photo - Right click to save (PC) or long press to save (Mobile)';
+                
+                // 恢复按钮状态
+                downloadBtn.textContent = 'Download';
+                downloadBtn.style.pointerEvents = 'auto';
+                
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败，请重试');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.style.pointerEvents = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>
